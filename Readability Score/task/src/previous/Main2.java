@@ -1,11 +1,11 @@
-package readability;
+package previous;
 
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Main {
-    public static void main(String[] args) {
+public class Main2 {
+    public static void main_(String[] args) {
         String text = new Scanner(System.in).nextLine();
         final double ratio = 1.0 * countWords(text) / countSentences(text);
         System.out.println(ratio > 10 ? "HARD" : "EASY");
