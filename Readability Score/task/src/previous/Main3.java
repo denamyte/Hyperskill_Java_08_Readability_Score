@@ -1,14 +1,16 @@
-package readability;
+package previous;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class Main {
-    public static void main(String[] args) throws IOException {
+public class Main3 {
+    public static void main_(String[] args) throws IOException {
         String text;
         try (BufferedReader reader = new BufferedReader(new FileReader(args[0]))) {
             text = reader.lines().collect(Collectors.joining(" "));
@@ -21,7 +23,7 @@ public class Main {
 
 class TextAnalyzer {
 
-    private static final Map<Integer, String> scoreTable;
+    static final Map<Integer, String> scoreTable;
     final String text;
 
     // Derived fields:
