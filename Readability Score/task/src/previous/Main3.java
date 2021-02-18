@@ -3,14 +3,12 @@ package previous;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Main3 {
-    public static void main_(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException {
         String text;
         try (BufferedReader reader = new BufferedReader(new FileReader(args[0]))) {
             text = reader.lines().collect(Collectors.joining(" "));
@@ -23,7 +21,8 @@ public class Main3 {
 
 class TextAnalyzer {
 
-    static final Map<Integer, String> scoreTable;
+    private static final String[] yearsTable = {"5-6", "6-7", "7-9", "9-10", "10-11", "11-12", "12-13", "13-14",
+            "14-15", "15-16", "16-17", "17-18", "18-24", "24+"};
     final String text;
 
     // Derived fields:
@@ -32,16 +31,6 @@ class TextAnalyzer {
     private int charNumber;
     private double score;
     private String comprehensionYears;
-
-    static {
-        scoreTable = Stream.of("1 5-6", "2 6-7", "3 7-9", "4 9-10", "5 10-11", "6 11-12", "7 12-13", "8 13-14",
-                               "9 14-15", "10 15-16", "11 16-17", "12 17-18", "13 18-24", "14 24+")
-                .map(s -> s.split(" "))
-                .collect(Collectors.toMap(
-                        ar -> Integer.parseInt(ar[0]),
-                        ar -> ar[1],
-                        (s, s2) -> s));
-    }
 
     public TextAnalyzer(String text) {
         this.text = text;
@@ -60,8 +49,8 @@ class TextAnalyzer {
         sentenceNumber = countSentences();
         charNumber = countCharacters();
         score = calcScore();
-        final int key = score > 14 ? 14 : (int) Math.ceil(score);
-        comprehensionYears = scoreTable.get(key);
+        final int key = score > 14 ? 13 : (int) Math.ceil(score) - 1;
+        comprehensionYears = yearsTable[key];
     }
 
     private int countWords() {
