@@ -13,63 +13,34 @@ public class Main {
         try (BufferedReader reader = new BufferedReader(new FileReader(args[0]))) {
             text = reader.lines().collect(Collectors.joining(" "));
         }
-        TextAnalyzer analyzer = new TextAnalyzer(text);
-        System.out.println(analyzer.getTextInfo());
+        ReadabilityCounter counter = new ReadabilityCounter(text);
+
     }
 
 }
 
 class TextAnalyzer {
+    private final String text;
+    public final int wordNumber;
+    public final int sentenceNumber;
+    public final int charNumber;
+    public final int syllableNumber;
+    public final int polysyllableNumber;
 
-    private static final String[] yearsTable = {"5-6", "6-7", "7-9", "9-10", "10-11", "11-12", "12-13", "13-14",
-            "14-15", "15-16", "16-17", "17-18", "18-24", "24+"};
-    final String text;
-
-    // Derived fields:
-    private int wordNumber;
-    private int sentenceNumber;
-    private int charNumber;
-    private double score;
-    private String comprehensionYears;
-
-    public TextAnalyzer(String text) {
+    TextAnalyzer(String text) {
         this.text = text;
-        analyze();
+        wordNumber = countMatches(text, RegExp.WORD);
+        sentenceNumber = countMatches(text, RegExp.SENTENCE);
+        charNumber = countMatches(text, RegExp.CHARACTER);
+        String textWithoutLastE = text.toLowerCase().replaceAll(RegExp.MERGE_LAST_E_WITH_PREVIOUS_SYLLABLE, "a");
+
+        System.out.println(textWithoutLastE);
+
+        syllableNumber = countMatches(textWithoutLastE, RegExp.SYLLABLE);
+        polysyllableNumber = countMatches(textWithoutLastE, RegExp.POLYSYLLABLE);
     }
 
-    public String getTextInfo() {
-        return String.format(
-                "Words: %d\nSentences: %d\nCharacters: %d\n" +
-                        "The score is: %.2f\nThis text should be understood by %s-year-olds.",
-                wordNumber, sentenceNumber, charNumber, score, comprehensionYears);
-    }
-
-    private void analyze() {
-        wordNumber = countWords();
-        sentenceNumber = countSentences();
-        charNumber = countCharacters();
-        score = calcScore();
-        final int key = score > 14 ? 13 : (int) Math.ceil(score) - 1;
-        comprehensionYears = yearsTable[key];
-    }
-
-    private int countWords() {
-        return countMatches("[\\w,]+");
-    }
-
-    private int countSentences() {
-        return countMatches("[.!?]+\\s+|$");
-    }
-
-    private int countCharacters() {
-        return countMatches("[^\\s\\n\\t]");
-    }
-
-    private double calcScore() {
-        return 4.71 * charNumber / wordNumber + .5 * wordNumber / sentenceNumber - 21.43;
-    }
-
-    private int countMatches(String patternStr) {
+    private static int countMatches(String text, String patternStr) {
         Matcher matcher = Pattern.compile(patternStr).matcher(text);
         int count = 0;
         while (matcher.find()) {
@@ -77,4 +48,46 @@ class TextAnalyzer {
         }
         return count;
     }
+
+    @Override
+    public String toString() {
+        return String.format("The text is:\n%s\n\n" +
+                "Words: %d\nSentences: %d\nCharacters: %d\nSyllables: %d\nPolysyllables: %d"
+                , text, wordNumber, sentenceNumber, charNumber, syllableNumber, polysyllableNumber);
+    }
+}
+
+class ReadabilityCounter {
+
+    private static final int[] yearsTable = {6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 24, 24};
+
+    final TextAnalyzer analyzer;
+
+    ReadabilityCounter(String text) {
+        analyzer = new TextAnalyzer(text);
+        System.out.println(analyzer);
+    }
+
+    private double automatedTest() {
+        return 4.71 * analyzer.charNumber / analyzer.wordNumber +
+                .5 * analyzer.wordNumber / analyzer.sentenceNumber - 21.43;
+    }
+
+    // TODO: 2/23/21 Implement readability tests
+}
+
+class RegExp {
+    public static final String WORD = "[\\w,]+";
+    public static final String SENTENCE = "[.!?]+\\s+|$";
+    public static final String CHARACTER = "[^\\s\\n\\t]";
+
+    public static final String VOW = "[aeiouy]";
+    public static final String CONS = "[bcdfghjklmnpqrstvwxz]";
+    public static final String MERGE_LAST_E_WITH_PREVIOUS_SYLLABLE = String.format("%s%s+e\\b", VOW, CONS);
+    public static final String REGULAR_SYLLABLE = String.format("%s+", VOW);
+    public static final String DIGITAL_SYLLABLE = "\\d[\\d,]+";
+    public static final String SYLLABLE = String.format("%s|%s", REGULAR_SYLLABLE, DIGITAL_SYLLABLE);
+    public static final String POLYSYLLABLE = String.format("\\b%s*(%s+%s+){2,}%s+%s*\\b",
+                                                            CONS, VOW, CONS, VOW, CONS);
+
 }
