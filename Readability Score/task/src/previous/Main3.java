@@ -8,18 +8,18 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class Main3 {
-    public static void main(String[] args) throws IOException {
+    public static void main_(String[] args) throws IOException {
         String text;
         try (BufferedReader reader = new BufferedReader(new FileReader(args[0]))) {
             text = reader.lines().collect(Collectors.joining(" "));
         }
-        TextAnalyzer analyzer = new TextAnalyzer(text);
+        TextAnalyzer3 analyzer = new TextAnalyzer3(text);
         System.out.println(analyzer.getTextInfo());
     }
 
 }
 
-class TextAnalyzer {
+class TextAnalyzer3 {
 
     private static final String[] yearsTable = {"5-6", "6-7", "7-9", "9-10", "10-11", "11-12", "12-13", "13-14",
             "14-15", "15-16", "16-17", "17-18", "18-24", "24+"};
@@ -32,7 +32,7 @@ class TextAnalyzer {
     private double score;
     private String comprehensionYears;
 
-    public TextAnalyzer(String text) {
+    public TextAnalyzer3(String text) {
         this.text = text;
         analyze();
     }

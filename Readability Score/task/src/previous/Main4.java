@@ -1,4 +1,4 @@
-package readability;
+package previous;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -12,8 +12,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-public class Main {
-    public static void main(String[] args) throws IOException {
+public class Main4 {
+    public static void main_(String[] args) throws IOException {
         String text;
         try (BufferedReader reader = new BufferedReader(new FileReader(args[0]))) {
             text = reader.lines().collect(Collectors.joining(" "));
@@ -24,11 +24,11 @@ public class Main {
 
 class TestDispatcher {
 
-    final TextAnalyzer analyzer;
+    final TextAnalyzer4 analyzer;
     final Map<String, ReadabilityTest> testMap;
 
     TestDispatcher(String text) {
-        analyzer = new TextAnalyzer(text);
+        analyzer = new TextAnalyzer4(text);
         testMap = iniTestMap();
         dispatch();
     }
@@ -71,7 +71,7 @@ class TestDispatcher {
     }
 }
 
-class TextAnalyzer {
+class TextAnalyzer4 {
     private final String text;
     public final int words;
     public final int sentences;
@@ -79,7 +79,7 @@ class TextAnalyzer {
     public final int syllables;
     public final int polysyllables;
 
-    TextAnalyzer(String text) {
+    TextAnalyzer4(String text) {
         this.text = text;
         words = countMatches(text, RegExp.WORD);
         sentences = countMatches(text, RegExp.SENTENCE);
@@ -105,10 +105,10 @@ class TextAnalyzer {
 abstract class ReadabilityTest {
 
     private static final int[] yearsTable = {6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 24, 24};
-    protected final TextAnalyzer analyzer;
+    protected final TextAnalyzer4 analyzer;
     public final double index;
 
-    ReadabilityTest(TextAnalyzer analyzer) {
+    ReadabilityTest(TextAnalyzer4 analyzer) {
         this.analyzer = analyzer;
         index = calculate();
     }
@@ -128,7 +128,7 @@ abstract class ReadabilityTest {
 
 class AutomatedTest extends ReadabilityTest {
 
-    AutomatedTest(TextAnalyzer analyzer) {
+    AutomatedTest(TextAnalyzer4 analyzer) {
         super(analyzer);
     }
 
@@ -146,7 +146,7 @@ class AutomatedTest extends ReadabilityTest {
 
 class FleschKincaidTest extends ReadabilityTest {
 
-    FleschKincaidTest(TextAnalyzer analyzer) {
+    FleschKincaidTest(TextAnalyzer4 analyzer) {
         super(analyzer);
     }
 
@@ -164,7 +164,7 @@ class FleschKincaidTest extends ReadabilityTest {
 
 class GobbledygookTest extends ReadabilityTest {
 
-    GobbledygookTest(TextAnalyzer analyzer) {
+    GobbledygookTest(TextAnalyzer4 analyzer) {
         super(analyzer);
     }
 
@@ -181,7 +181,7 @@ class GobbledygookTest extends ReadabilityTest {
 
 class ColemanLiauTest extends ReadabilityTest {
 
-    ColemanLiauTest(TextAnalyzer analyzer) {
+    ColemanLiauTest(TextAnalyzer4 analyzer) {
         super(analyzer);
     }
 
